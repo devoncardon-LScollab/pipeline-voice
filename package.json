@@ -1,0 +1,13 @@
+{
+  "name": "pipeline-voice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Voice window for the Pipeline Orbs artifact: listens in Chrome and speaks answers with a Fish Audio voice.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

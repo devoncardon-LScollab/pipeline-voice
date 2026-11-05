@@ -8,127 +8,200 @@
 <style>
 :root {
   --void: #02060d; --glass: rgba(6, 18, 34, 0.82); --line: rgba(120, 225, 255, 0.28);
-  --ink: #e2f6ff; --soft: #9fc3d4; --arc: #62e6ff; --gold: #ffd46e; --warn: #ffab7a;
+  --ink: #e2f6ff; --soft: #9fc3d4; --arc: #62e6ff; --gold: #ffd46e; --warn: #ffab7a; --live: #4dffa6;
   --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; background: radial-gradient(circle at 50% 30%, #071a2e 0%, var(--void) 70%); color: var(--ink); font-family: var(--font); }
-body { display: grid; justify-items: center; gap: 16px; padding: 20px 16px 24px; }
-h1 { margin: 0; font: 600 13px var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--arc); }
-.status { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--soft); text-align: center; }
+body { display: grid; justify-items: center; gap: 12px; padding: 16px 14px 20px; }
+h1 { margin: 0; font: 600 12px var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--arc); }
+.status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--soft); text-align: center; }
 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); flex: none; }
-.status.ok .dot { background: #4dffa6; box-shadow: 0 0 8px #4dffa6; }
-.talk { position: relative; width: 168px; height: 168px; border-radius: 50%; border: 1px solid var(--line); background: radial-gradient(circle at 50% 42%, rgba(98, 230, 255, 0.18), rgba(4, 14, 28, 0.9) 70%); color: var(--ink); font: 600 13px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; }
-.talk::before { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1px dashed rgba(98, 230, 255, 0.4); }
+.status.ok .dot { background: var(--arc); box-shadow: 0 0 8px var(--arc); }
+.status.live .dot { background: var(--live); box-shadow: 0 0 10px var(--live); }
+.talk { position: relative; width: 120px; height: 120px; border-radius: 50%; border: 1px solid var(--line); background: radial-gradient(circle at 50% 42%, rgba(98, 230, 255, 0.18), rgba(4, 14, 28, 0.9) 70%); color: var(--ink); font: 600 11.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; }
+.talk::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; border: 1px dashed rgba(98, 230, 255, 0.4); }
 .talk:focus-visible { outline: 2px solid var(--arc); outline-offset: 6px; }
-.talk[aria-pressed="true"], .talk.live { border-color: var(--arc); box-shadow: 0 0 40px rgba(98, 230, 255, 0.45), inset 0 0 30px rgba(98, 230, 255, 0.25); }
-.talk.live::before { animation: spin 6s linear infinite; border-color: var(--arc); }
+.talk.live { border-color: var(--live); box-shadow: 0 0 36px rgba(77, 255, 166, 0.4), inset 0 0 26px rgba(77, 255, 166, 0.2); }
+.talk.live::before { animation: spin 6s linear infinite; border-color: var(--live); }
 .talk:disabled { opacity: 0.45; cursor: not-allowed; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .talk.live::before { animation: none; } }
-.keep { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--soft); }
-.keep input { width: 18px; height: 18px; accent-color: var(--arc); }
-.heard { min-height: 1.4em; max-width: 340px; text-align: center; font-size: 15px; color: var(--ink); }
+.hint { max-width: 320px; text-align: center; font-size: 12.5px; color: var(--soft); margin: 0; }
+.hint kbd { font: 600 11px var(--mono); padding: 1px 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); }
+.enable { font: 600 12px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: #02060d; background: var(--gold); border: 0; border-radius: 999px; padding: 9px 16px; cursor: pointer; box-shadow: 0 0 18px rgba(255, 212, 110, 0.45); }
+.enable:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.enable.on { color: var(--soft); background: none; border: 1px solid var(--line); box-shadow: none; cursor: default; }
+.keep { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--soft); }
+.keep input { width: 16px; height: 16px; accent-color: var(--arc); }
+.heard { min-height: 1.3em; max-width: 320px; text-align: center; font-size: 14px; }
 .heard.interim { color: var(--soft); font-style: italic; }
-.log { width: min(360px, 100%); list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 40vh; overflow-y: auto; }
-.log li { padding: 8px 10px; border: 1px solid var(--line); background: var(--glass); font-size: 14px; line-height: 1.35; }
-.log li b { display: block; font: 600 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2px; }
+.log { width: min(340px, 100%); list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 34vh; overflow-y: auto; }
+.log li { padding: 7px 9px; border: 1px solid var(--line); background: var(--glass); font-size: 13.5px; line-height: 1.35; }
+.log li b { display: block; font: 600 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2px; }
 .log li.you b { color: var(--arc); }
 .log li.orbs b { color: var(--gold); }
 .log li.err { border-color: rgba(255, 171, 122, 0.5); }
 .log li.err b { color: var(--warn); }
-.hint { max-width: 340px; text-align: center; font-size: 12.5px; color: var(--soft); margin: 0; }
 </style>
 </head>
 <body>
   <h1>Pipeline Voice</h1>
   <div class="status" id="status" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="status-text">Connecting to Pipeline Orbs…</span></div>
-  <button class="talk" id="talk" type="button" aria-pressed="false" aria-describedby="talk-hint">Hold to talk</button>
-  <p class="hint" id="talk-hint">Hold the button (or Space) while you speak, then let go.</p>
+  <button class="enable" id="enable" type="button">Enable voice</button>
+  <button class="talk" id="talk" type="button" aria-describedby="talk-hint">Hold to talk</button>
+  <p class="hint" id="talk-hint">Click Enable voice once, then leave this window in the background. In Pipeline Orbs, hold <kbd>Option</kbd> to talk and let go to send.</p>
   <label class="keep"><input type="checkbox" id="keep"> Keep listening</label>
   <div class="heard" id="heard" aria-live="polite"></div>
   <ul class="log" id="log" aria-label="Conversation"></ul>
 <script>
 (() => {
   "use strict";
-  // This window only listens and passes what you say to the Pipeline Orbs window that opened it.
-  // It never sees your deals; Pipeline Orbs runs each request and sends back a short reply.
+  // This window only listens and passes your exact words to Pipeline Orbs. It never sees your deals:
+  // Pipeline Orbs works out what you asked, does it, and speaks the answer.
   const $ = s => document.querySelector(s);
   const talk = $("#talk"), keep = $("#keep"), heard = $("#heard"), log = $("#log"), statusEl = $("#status"), statusText = $("#status-text");
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const opener = window.opener;
-  let ready = false, rec = null, listening = false, holding = false, paused = false, seq = 0, buffer = "";
+  const enableBtn = $("#enable");
+  const say = { on: false, queue: Promise.resolve(), audio: null };
+  let boss = window.opener, bossOrigin = "", ready = false, rec = null, listening = false, wantOn = false, paused = false, seq = 0, buffer = "", interim = "", flushTimer = null;
 
-  const setStatus = (text, ok) => { statusText.textContent = text; statusEl.classList.toggle("ok", !!ok); };
+  const setStatus = (text, cls) => { statusText.textContent = text; statusEl.classList.toggle("ok", cls === "ok"); statusEl.classList.toggle("live", cls === "live"); };
   const add = (who, text, cls) => {
     const li = document.createElement("li"); li.className = cls;
     const b = document.createElement("b"); b.textContent = who; li.append(b, document.createTextNode(text));
-    log.prepend(li);
+    log.prepend(li); while (log.children.length > 12) log.lastChild.remove();
   };
-  const send = msg => { try { opener.postMessage(Object.assign({ pv: 1 }, msg), "*"); } catch (e) { setStatus("Lost the connection to Pipeline Orbs. Open this window again from the Voice button.", false); } };
+  const send = msg => { try { if (boss && !boss.closed) boss.postMessage(Object.assign({ pv: 1 }, msg), bossOrigin || "*"); } catch (e) { /* Pipeline Orbs went away */ } };
+  const idle = () => setStatus(ready ? "Connected · hold Option in Pipeline Orbs to talk" : "Waiting for Pipeline Orbs… double-tap Option there", ready ? "ok" : "");
 
-  if (!SR) { talk.disabled = true; keep.disabled = true; setStatus("This browser can't listen. Use Chrome or Edge.", false); }
-  if (!opener) { talk.disabled = true; keep.disabled = true; setStatus("Open this window with the Voice button in Pipeline Orbs.", false); return; }
+  if (!SR) { talk.disabled = true; keep.disabled = true; setStatus("This browser can't listen. Use Chrome or Edge.", ""); }
+  if (!boss) { talk.disabled = true; keep.disabled = true; setStatus("Open this window by double-tapping Option in Pipeline Orbs.", ""); }
 
-  // Handshake: say hello until Pipeline Orbs answers.
-  const hello = setInterval(() => { if (ready) return clearInterval(hello); if (opener.closed) { clearInterval(hello); setStatus("Pipeline Orbs was closed.", false); return; } send({ type: "hello" }); }, 1000);
+  // Say hello until Pipeline Orbs answers.
+  setInterval(() => { if (!ready && boss && !boss.closed) send({ type: "hello" }); }, 1000);
   send({ type: "hello" });
 
   window.addEventListener("message", e => {
-    if (e.source !== opener) return; // only the window that opened this one
     const m = e.data || {}; if (m.pv !== 1) return;
-    if (m.type === "ready") { ready = true; setStatus("Connected to Pipeline Orbs", true); }
-    if (m.type === "reply") add("Pipeline Orbs", String(m.text || ""), m.error ? "orbs err" : "orbs");
-    if (m.type === "speaking") { paused = !!m.on; if (paused) stop(); else if (keep.checked) start(); }
+    // Only Pipeline Orbs: the window that opened this one, or Pipeline Orbs again (same address) after you reload it.
+    if (e.source !== boss) { if (m.type !== "adopt" || !bossOrigin || e.origin !== bossOrigin) return; boss = e.source; ready = false; }
+    if (!bossOrigin) bossOrigin = e.origin;
+    if (m.type === "ready" || m.type === "adopt") { ready = true; talk.disabled = !SR; keep.disabled = !SR; idle(); send({ type: "state", listening }); send({ type: "voicecaps", tts: say.on }); }
+    if (m.type === "reply") {
+      add("Pipeline Orbs", String(m.text || ""), m.error ? "orbs err" : "orbs");
+      if (m.speak) { const text = String(m.text || ""), id = m.id; say.queue = say.queue.then(() => speak(text, id)); }
+    }
+    if (m.type === "hush") hush();
+    if (m.type === "speaking") { paused = !!m.on; if (paused) stopNow(); else if (keep.checked) start(); }
+    if (m.type === "listen") { if (m.on) begin(); else end(); }
   });
-  setInterval(() => { if (opener.closed) { setStatus("Pipeline Orbs was closed.", false); talk.disabled = true; keep.disabled = true; stop(); } }, 2000);
+  setInterval(() => { if (ready && boss && boss.closed) { ready = false; stopNow(); idle(); } }, 2000);
 
   function make() {
     const r = new SR(); r.lang = "en-US"; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
     r.onresult = e => {
-      let interim = "";
+      interim = "";
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const t = e.results[i][0].transcript;
         if (e.results[i].isFinal) buffer += (buffer ? " " : "") + t.trim(); else interim += t;
       }
-      heard.textContent = (buffer + " " + interim).trim(); heard.classList.toggle("interim", !!interim);
+      const shown = (buffer + " " + interim).trim();
+      heard.textContent = shown; heard.classList.toggle("interim", !!interim);
+      send({ type: "interim", text: shown });
       if (keep.checked && buffer && !interim) flush();
     };
     r.onerror = e => {
       if (e.error === "no-speech" || e.error === "aborted") return;
-      add("Microphone", e.error === "not-allowed" ? "The microphone is blocked for this page. Allow it in Chrome's address bar, then try again." : "Listening stopped (" + e.error + ").", "err");
-      keep.checked = false; holding = false; talk.setAttribute("aria-pressed", "false");
+      const msg = e.error === "not-allowed" ? "The microphone is blocked for this window. Click the address bar's mic icon and allow it." : "Listening stopped (" + e.error + ").";
+      add("Microphone", msg, "err"); send({ type: "error", text: msg }); keep.checked = false; wantOn = false;
     };
-    r.onend = () => { listening = false; talk.classList.remove("live"); if (keep.checked && !paused) setTimeout(start, 250); };
+    r.onend = () => {
+      listening = false; talk.classList.remove("live"); send({ type: "state", listening: false });
+      if (!wantOn && !keep.checked) { clearTimeout(flushTimer); flush(); idle(); }
+      else if (!paused) setTimeout(start, 200); // Chrome stops on its own now and then; carry on while the key is held
+    };
     return r;
   }
   function start() {
     if (!SR || listening || paused || talk.disabled) return;
     rec = rec || make();
-    try { rec.start(); listening = true; talk.classList.add("live"); } catch (e) { /* already running */ }
+    try { rec.start(); listening = true; talk.classList.add("live"); setStatus("Listening…", "live"); send({ type: "state", listening: true }); } catch (e) { /* already running */ }
   }
-  function stop() { if (rec && listening) { try { rec.stop(); } catch (e) { /* already stopped */ } } }
+  function stopNow() { if (rec && listening) { try { rec.stop(); } catch (e) { /* already stopped */ } } }
+  function begin() { hush(); wantOn = true; buffer = ""; interim = ""; heard.textContent = ""; start(); }
+  function end() { wantOn = false; stopNow(); clearTimeout(flushTimer); flushTimer = setTimeout(flush, 900); } // a moment for Chrome's last words
   function flush() {
-    const text = buffer.trim(); buffer = ""; if (!text) return;
-    heard.textContent = ""; heard.classList.remove("interim");
+    const text = (buffer + " " + (wantOn || keep.checked ? "" : interim)).trim(); buffer = ""; interim = "";
+    heard.textContent = ""; heard.classList.remove("interim"); send({ type: "interim", text: "" });
+    if (!text) return;
     add("You", text, "you");
-    if (!ready) { add("Pipeline Orbs", "Not connected yet. Keep the Pipeline Orbs tab open.", "orbs err"); return; }
+    if (!ready) { add("Pipeline Orbs", "Not connected. Double-tap Option in Pipeline Orbs.", "orbs err"); return; }
     send({ type: "heard", id: ++seq, text });
   }
 
-  // Hold to talk (mouse, touch or Space/Enter).
-  const down = () => { if (keep.checked || talk.disabled) return; holding = true; buffer = ""; talk.setAttribute("aria-pressed", "true"); start(); };
-  const up = () => { if (!holding) return; holding = false; talk.setAttribute("aria-pressed", "false"); stop(); setTimeout(flush, 350); };
-  talk.addEventListener("pointerdown", e => { e.preventDefault(); talk.setPointerCapture(e.pointerId); down(); });
-  talk.addEventListener("pointerup", up); talk.addEventListener("pointercancel", up);
-  talk.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); down(); } });
-  talk.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); up(); } });
+  // When this window is in front: hold the button, Space, or Option.
+  talk.addEventListener("pointerdown", e => { e.preventDefault(); talk.setPointerCapture(e.pointerId); if (!keep.checked) begin(); });
+  talk.addEventListener("pointerup", () => { if (!keep.checked) end(); });
+  talk.addEventListener("pointercancel", () => { if (!keep.checked) end(); });
+  let altTimer = null, altHeld = false, altOther = false;
+  document.addEventListener("keydown", e => {
+    if (e.key === "Alt" && !e.repeat) { altOther = false; altTimer = setTimeout(() => { if (!altOther) { altHeld = true; begin(); } }, 250); return; }
+    if (e.altKey) { altOther = true; clearTimeout(altTimer); }
+    if ((e.key === " " || e.key === "Enter") && document.activeElement === talk && !e.repeat) { e.preventDefault(); if (!keep.checked) begin(); }
+  });
+  document.addEventListener("keyup", e => {
+    if (e.key === "Alt") { clearTimeout(altTimer); if (altHeld) { altHeld = false; end(); } return; }
+    if ((e.key === " " || e.key === "Enter") && document.activeElement === talk) { e.preventDefault(); if (!keep.checked) end(); }
+  });
+  window.addEventListener("blur", () => { if (altHeld) { altHeld = false; end(); } });
+
+  // Speaking: your Fish Audio voice through this site's server; Chrome's built-in voice if that's slow or down.
+  enableBtn.addEventListener("click", async () => {
+    if (say.on) return;
+    enableBtn.textContent = "Checking…";
+    let ok = false;
+    try { const r = await fetch("/health", { cache: "no-store" }); ok = r.ok && !!(await r.json()).voice; } catch (e) { ok = false; }
+    say.on = true; // this click also lets the window play sound for the rest of the session
+    enableBtn.classList.add("on");
+    enableBtn.textContent = ok ? "Voice on" : "Voice on (built-in)";
+    if (!ok) add("Voice", "Your Fish Audio voice isn't set up on the server yet, so answers use Chrome's built-in voice.", "err");
+    say.fish = ok; send({ type: "voicecaps", tts: true });
+  });
+  function hush() {
+    if (say.audio) { try { say.audio.pause(); } catch (e) { /* gone */ } say.audio = null; }
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+  }
+  async function speak(text, id) {
+    if (!text) return send({ type: "spoken", id });
+    paused = true; stopNow(); send({ type: "speakstate", on: true });
+    try {
+      let played = false;
+      if (say.fish) {
+        try {
+          const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
+          const r = await fetch("/speak", { method: "POST", signal: ctl.signal, headers: { "Content-Type": "application/json", "X-Pipeline-Voice": "1" }, body: JSON.stringify({ text }) });
+          clearTimeout(t);
+          if (r.ok) {
+            const url = URL.createObjectURL(await r.blob());
+            await new Promise(res => { const a = new Audio(url); say.audio = a; a.onended = a.onerror = a.onpause = () => res(); a.play().catch(() => res()); });
+            URL.revokeObjectURL(url); played = true;
+          }
+        } catch (e) { played = false; }
+      }
+      if (!played && "speechSynthesis" in window && !wantOn) {
+        await new Promise(res => { const u = new SpeechSynthesisUtterance(text.replace(/[·•]/g, ",")); u.onend = u.onerror = () => res(); speechSynthesis.speak(u); setTimeout(res, 25000); });
+      }
+    } finally {
+      say.audio = null; paused = false; send({ type: "speakstate", on: false }); send({ type: "spoken", id });
+      if (keep.checked && !wantOn) start();
+    }
+  }
 
   keep.addEventListener("change", () => {
     talk.textContent = keep.checked ? "Listening" : "Hold to talk";
-    document.getElementById("talk-hint").textContent = keep.checked ? "Just talk. Each pause sends what you said. Untick to stop." : "Hold the button (or Space) while you speak, then let go.";
-    if (keep.checked) { buffer = ""; start(); } else stop();
+    if (keep.checked) begin(); else end();
   });
 })();
 </script>
